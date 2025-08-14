@@ -1,0 +1,741 @@
+{
+  "info": {
+    "name": "SOP Document Manager API",
+    "description": "Complete API collection for the SOP Document Management System with authentication, document management, user management, and administrative endpoints.",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3001",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refreshToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "documentId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "changeRequestId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', response.accessToken);",
+                  "    pm.collectionVariables.set('refreshToken', response.refreshToken);",
+                  "    pm.collectionVariables.set('userId', response.user.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('accessToken', response.accessToken);",
+                  "    pm.collectionVariables.set('refreshToken', response.refreshToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/refresh",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "refresh"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "logout"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "me"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"password123\",\n  \"newPassword\": \"newPassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/change-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "change-password"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/forgot-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "forgot-password"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"reset-token-here\",\n  \"newPassword\": \"newPassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/reset-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "reset-password"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Sessions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/sessions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "sessions"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Revoke Session",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/sessions/:sessionId",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "sessions", ":sessionId"],
+              "variable": [
+                {
+                  "key": "sessionId",
+                  "value": "session-id-here"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Documents",
+      "item": [
+        {
+          "name": "Get All Documents",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/documents?page=1&limit=20&status=draft&department=IT&country=US&search=SOP",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "documents"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (optional)"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Items per page (optional)"
+                },
+                {
+                  "key": "status",
+                  "value": "draft",
+                  "description": "Filter by status (optional)"
+                },
+                {
+                  "key": "department",
+                  "value": "IT",
+                  "description": "Filter by department (optional)"
+                },
+                {
+                  "key": "country",
+                  "value": "US",
+                  "description": "Filter by country (optional)"
+                },
+                {
+                  "key": "search",
+                  "value": "SOP",
+                  "description": "Search in name, code, description (optional)"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Document by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('documentId', response.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/documents/{{documentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "documents", "{{documentId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Document",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('documentId', response.documentId);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sopName\": \"New SOP Document\",\n  \"documentCode\": \"SOP-001\",\n  \"documentNumber\": \"DOC-001\",\n  \"versionNumber\": \"1.0\",\n  \"uploadDate\": \"2024-01-15\",\n  \"lastRevisionDate\": \"2024-01-15\",\n  \"nextRevisionDate\": \"2025-01-15\",\n  \"documentType\": \"SOP\",\n  \"department\": \"IT\",\n  \"country\": \"US\",\n  \"description\": \"Standard Operating Procedure for IT processes\",\n  \"documentOwners\": [\n    {\n      \"id\": \"{{userId}}\"\n    }\n  ],\n  \"reviewers\": [\n    {\n      \"id\": \"{{userId}}\"\n    }\n  ],\n  \"documentCreators\": [\n    {\n      \"id\": \"{{userId}}\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/documents",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "documents"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Document",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sopName\": \"Updated SOP Document\",\n  \"description\": \"Updated description\",\n  \"status\": \"under-review\",\n  \"documentOwners\": [\n    {\n      \"id\": \"{{userId}}\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/documents/{{documentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "documents", "{{documentId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Document (Soft Delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/documents/{{documentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "documents", "{{documentId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Document Logs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/documents/{{documentId}}/logs",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "documents", "{{documentId}}", "logs"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Comment to Document",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"comment\": \"This document needs review for compliance standards.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/documents/{{documentId}}/comments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "documents", "{{documentId}}", "comments"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users & Master Data",
+      "item": [
+        {
+          "name": "Get Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users?role=admin&department=IT",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"],
+              "query": [
+                {
+                  "key": "role",
+                  "value": "admin",
+                  "description": "Filter by role (optional)"
+                },
+                {
+                  "key": "department",
+                  "value": "IT",
+                  "description": "Filter by department (optional)"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Countries",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/countries",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "countries"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Departments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/departments",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "departments"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Document Types",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/document-types",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "document-types"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Change Requests",
+      "item": [
+        {
+          "name": "Get Change Requests",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/change-requests?status=pending&documentId={{documentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "change-requests"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "pending",
+                  "description": "Filter by status (optional)"
+                },
+                {
+                  "key": "documentId",
+                  "value": "{{documentId}}",
+                  "description": "Filter by document ID (optional)"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Change Request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('changeRequestId', response.changeRequestId);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"documentId\": \"{{documentId}}\",\n  \"requesterId\": \"{{userId}}\",\n  \"requestType\": \"update\",\n  \"description\": \"Request to update compliance standards section\",\n  \"priority\": \"medium\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/change-requests",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "change-requests"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Change Request Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"approved\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/change-requests/{{changeRequestId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "change-requests", "{{changeRequestId}}", "status"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Dashboard & Analytics",
+      "item": [
+        {
+          "name": "Get Dashboard Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dashboard", "stats"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "File Upload",
+      "item": [
+        {
+          "name": "Serve Uploaded File",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/uploads/filename.pdf",
+              "host": ["{{baseUrl}}"],
+              "path": ["uploads", "filename.pdf"]
+            },
+            "description": "Serve uploaded files. Replace 'filename.pdf' with actual file path."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Auto-refresh token if expired",
+          "const accessToken = pm.collectionVariables.get('accessToken');",
+          "const refreshToken = pm.collectionVariables.get('refreshToken');",
+          "",
+          "if (accessToken && refreshToken) {",
+          "    try {",
+          "        const tokenPayload = JSON.parse(atob(accessToken.split('.')[1]));",
+          "        const currentTime = Math.floor(Date.now() / 1000);",
+          "        ",
+          "        // Check if token expires in next 5 minutes",
+          "        if (tokenPayload.exp && tokenPayload.exp - currentTime < 300) {",
+          "            console.log('Token expiring soon, refreshing...');",
+          "            ",
+          "            const refreshRequest = {",
+          "                url: pm.collectionVariables.get('baseUrl') + '/api/auth/refresh',",
+          "                method: 'POST',",
+          "                header: {",
+          "                    'Content-Type': 'application/json'",
+          "                },",
+          "                body: {",
+          "                    mode: 'raw',",
+          "                    raw: JSON.stringify({",
+          "                        refreshToken: refreshToken",
+          "                    })",
+          "                }",
+          "            };",
+          "            ",
+          "            pm.sendRequest(refreshRequest, (err, response) => {",
+          "                if (err) {",
+          "                    console.error('Error refreshing token:', err);",
+          "                } else if (response.code === 200) {",
+          "                    const responseJson = response.json();",
+          "                    pm.collectionVariables.set('accessToken', responseJson.accessToken);",
+          "                    pm.collectionVariables.set('refreshToken', responseJson.refreshToken);",
+          "                    console.log('Token refreshed successfully');",
+          "                } else {",
+          "                    console.error('Failed to refresh token:', response.status);",
+          "                }",
+          "            });",
+          "        }",
+          "    } catch (e) {",
+          "        console.error('Error parsing token:', e);",
+          "    }",
+          "}"
+        ]
+      }
+    }
+  ]
+}
